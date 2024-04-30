@@ -26,6 +26,24 @@ function getJsonData($link) {
     return json_decode($out, true);
 }
 
+function generovanieHTML($novy_rok, $stary_rok, $kluc) {
+if($key === $kluc) {
+if($novy_rok < $stary_rok) {
+$class_farba = 'class-do-minusu';
+} else {
+$class_farba = 'class-do-plusu';
+}
+?>
+<div class="w-16 d-inline-block float-left polozka-overenie <?php echo $class_farba; ?>">
+<?php
+echo '<div class="w-100 d-block float-left f-size-18 f-weight-300 titulokpolozka-overenie"><span>Tržby</span></div>';
+echo '<strong>'. number_format($value, 0, ',', ' ') . ' €</strong>';
+if($novy_rok < $stary_rok) {echo'<div class="znamienko do-minusu d-inline-block"><i class="flaticon flaticon-down-arrow"></i></div>';} else {echo'<div class="znamienko do-plusu d-inline-block"><i class="flaticon flaticon-down-arrow"></i></div>';}
+echo '</div>';
+}
+
+
+}
 
 $link ="https://www.registeruz.sk/cruz-public/api/uctovne-jednotky?zmenene-od=2000-01-01&max-zaznamov=100&ico=$ico";
     $obj = getJsonData($link);
@@ -80,20 +98,7 @@ foreach($tabulkyss as $key => $value) {
 
 //TRZBY ZACIATOK
 if(!empty($tabulkys['data'][4])) {
-if($key === 4) {
-if($tabulkys['data'][4] < $tabulkys['data'][5]) {
-$class_farba = 'class-do-minusu';
-} else {
-$class_farba = 'class-do-plusu';
-}
-?>
-<div class="w-16 d-inline-block float-left polozka-overenie <?php echo $class_farba; ?>">
-<?php
-echo '<div class="w-100 d-block float-left f-size-18 f-weight-300 titulokpolozka-overenie"><span>Tržby</span></div>';
-echo '<strong>'. number_format($value, 0, ',', ' ') . ' €</strong>';
-if($tabulkys['data'][4] < $tabulkys['data'][5]) {echo'<div class="znamienko do-minusu d-inline-block"><i class="flaticon flaticon-down-arrow"></i></div>';} else {echo'<div class="znamienko do-plusu d-inline-block"><i class="flaticon flaticon-down-arrow"></i></div>';}
-echo '</div>';
-}
+generovanieHTML($tabulkys['data'][4], $tabulkys['data'][5], 4);
 } else {
 if($key === 0) {
 if($tabulkys['data'][0] < $tabulkys['data'][1]) {
