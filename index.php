@@ -1,3 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+    .do-plusu,
+    .class-do-plusu {
+      color:green;  
+    }
+    .do-minusu,
+    .class-do-minusu {
+      color:red;  
+    }
+    </style>
+</head>
+<body>
+    
 <?php 
 if(!empty($_GET["ico"])) {
 $ico = $_GET["ico"];
@@ -45,7 +64,7 @@ echo '<strong>'. number_format($value, 0, ',', ' ') . ' €</strong>'; // Zobraz
 } else {
 echo '<strong>-</strong>';    
 }
-if($novy_rok < $stary_rok) {echo'<div class="znamienko do-minusu d-inline-block"><i class="flaticon flaticon-down-arrow"></i></div>';} else {echo'<div class="znamienko do-plusu d-inline-block"><i class="flaticon flaticon-down-arrow"></i></div>';}
+if($novy_rok < $stary_rok) {echo'<div class="znamienko do-minusu d-inline-block">&#8595;</div>';} else {echo'<div class="znamienko do-plusu d-inline-block">&#8593;</div>';}
 echo '</div>';
 }
 }
@@ -168,3 +187,6 @@ generovanieHTML('Závätky', $tabulkys['data'][44], $tabulkys['data'][45], 44,  
     <input type="text" name="ico">
     <input type="submit" value="Odoslať">
 </form>
+
+</body>
+</html>
