@@ -1,6 +1,7 @@
 <?php 
+if(!empty($_GET["ico"])) {
 $ico = $_GET["ico"];
-if(!empty($ico)) {
+
 
 function in_array_r($needle, $haystack, $strict = false) {
     foreach ($haystack as $item) {
@@ -37,7 +38,11 @@ $class_farba = 'class-do-plusu';
 <div class="w-16 d-inline-block float-left polozka-overenie <?php echo $class_farba; ?>">
 <?php
 echo '<div class="w-100 d-block float-left f-size-18 f-weight-300 titulokpolozka-overenie"><span>' . $nazov .'</span></div>';
+if(is_numeric($value)) {
 echo '<strong>'. number_format($value, 0, ',', ' ') . ' €</strong>';
+} else {
+echo '<strong>-</strong>';    
+}
 if($novy_rok < $stary_rok) {echo'<div class="znamienko do-minusu d-inline-block"><i class="flaticon flaticon-down-arrow"></i></div>';} else {echo'<div class="znamienko do-plusu d-inline-block"><i class="flaticon flaticon-down-arrow"></i></div>';}
 echo '</div>';
 }
@@ -52,11 +57,6 @@ $link ="https://www.registeruz.sk/cruz-public/api/uctovne-jednotky?zmenene-od=20
     $link_uctovna_jednotka = "https://www.registeruz.sk/cruz-public/api/uctovna-jednotka?id=$id_uctovnej_jednotky";
     $obj_new = getJsonData($link_uctovna_jednotka);
 
-
-//echo $obj_new->skNace;
-//echo $obj_new->konsolidovana;
-//echo $obj_new->nazovUJ;
-//print_r($obj_new);
 $id_vykazu = array();
 rsort($obj_new['idUctovnychZavierok']);
 foreach ($obj_new['idUctovnychZavierok'] as $ustovna_zavierka) {
@@ -77,21 +77,14 @@ foreach ($id_vykazu as $ustovnay_vykaz) {
             $datumPoslednejUpravydo = !empty($obj_new4['obsah']['titulnaStrana']['obdobieDo']) ? $obj_new4['obsah']['titulnaStrana']['obdobieDo'] : '';
 
 
-//echo $obj_new4['obsah']['titulnaStrana']['typZavierky'];
-
 if(!empty($obj_new4['obsah']['tabulky'])) {
 foreach($tabulky as $tabulkys)  {
 
 
 if (in_array_r("Výkaz ziskov a strát", $tabulkys)) {
-//print_r($tabulkys);
-
-
-
 
 $previousValue = null;
 foreach ($tabulkys as $tabulkyss)  {
-
 
 foreach($tabulkyss as $key => $value) {
 
@@ -100,25 +93,9 @@ foreach($tabulkyss as $key => $value) {
 if(!empty($tabulkys['data'][4])) {
 generovanieHTML('Tržby', $tabulkys['data'][4], $tabulkys['data'][5], 4,  $key, $value);
 } else {
-if($key === 0) {
-if($tabulkys['data'][0] < $tabulkys['data'][1]) {
-$class_farba = 'class-do-minusu';
-} else {
-$class_farba = 'class-do-plusu';
-}
-?>
-<div class="w-16 d-inline-block float-left polozka-overenie <?php echo $class_farba; ?>">
-<?php
-echo '<div class="w-100 d-block float-left f-size-18 f-weight-300 titulokpolozka-overenie"><span>Tržby</span></div>';
-echo '<strong>'. number_format($value, 0, ',', ' ') . ' €</strong>';
-if($tabulkys['data'][0] < $tabulkys['data'][1]) {echo'<div class="znamienko do-minusu d-inline-block"><i class="flaticon flaticon-down-arrow"></i></div>';} else {echo'<div class="znamienko do-plusu d-inline-block"><i class="flaticon flaticon-down-arrow"></i></div>';}
-echo '</div>';
-}
+generovanieHTML('Tržby', $tabulkys['data'][0], $tabulkys['data'][1], 0,  $key, $value);    
 }
 //TRZBY KNIEC
-
-
-
 
 
 
@@ -127,46 +104,16 @@ $class_farba = '';
 if(!empty($tabulkys['data'][74])) {
     generovanieHTML('Zisk', $tabulkys['data'][74], $tabulkys['data'][75], 74,  $key, $value);
 } else {
-if($key === 120) { 
-
-if($tabulkys['data'][120] < $tabulkys['data'][121]) {
-$class_farba = 'class-do-minusu';
-} else {
-$class_farba = 'class-do-plusu';
-}
-?>
-<div class="w-16 d-inline-block float-left polozka-overenie <?php echo $class_farba; ?>">
-<?php
-echo '<div class="w-100 d-block float-left f-size-18 f-weight-300 titulokpolozka-overenie"><span>Zisk</span></div>';
-echo '<strong>'. number_format($value, 0, ',', ' ') . ' €</strong>';
-if($tabulkys['data'][120] < $tabulkys['data'][121]) {echo'<div class="znamienko do-minusu d-inline-block"><i class="flaticon flaticon-down-arrow"></i></div>';} else {echo'<div class="znamienko do-plusu d-inline-block"><i class="flaticon flaticon-down-arrow"></i></div>';}
-echo '</div>';
-}
+    generovanieHTML('Zisk', $tabulkys['data'][120], $tabulkys['data'][121], 120,  $key, $value);
 }
 
 
-
-
-
-//ZISK Celkové výnosy
+//Celkové výnosy
 
 if(!empty($tabulkys['data'][2])) {
-    generovanieHTML('Zisk', $tabulkys['data'][2], $tabulkys['data'][3], 2,  $key, $value);
+    generovanieHTML('celkové výnosy', $tabulkys['data'][2], $tabulkys['data'][3], 2,  $key, $value);
 } else {
-if($key === 0) {
-if($tabulkys['data'][0] < $tabulkys['data'][1]) {
-$class_farba = 'class-do-minusu';
-} else {
-$class_farba = 'class-do-plusu';
-}
-?>
-<div class="w-16 d-inline-block float-left polozka-overenie <?php echo $class_farba; ?>">
-<?php
-echo '<div class="w-100 d-block float-left f-size-18 f-weight-300 titulokpolozka-overenie"><span>Celkové výnosy</span></div>';
-echo '<strong>'. number_format($tabulkys['data'][0], 0, ',', ' ') . ' €</strong>';
-if($tabulkys['data'][0] < $tabulkys['data'][1]) {echo'<div class="znamienko do-minusu d-inline-block"><i class="flaticon flaticon-down-arrow"></i></div>';} else {echo'<div class="znamienko do-plusu d-inline-block"><i class="flaticon flaticon-down-arrow"></i></div>';}
-echo '</div>';
-}
+    generovanieHTML('celkové výnosy', $tabulkys['data'][0], $tabulkys['data'][1], 0,  $key, $value);
 }
 
 
@@ -196,74 +143,19 @@ foreach ($tabulkys as $tabulkyss)  {
 
 foreach($tabulkyss as $key => $value) {
 
+generovanieHTML('celkový majetok', $tabulkys['data'][2], $tabulkys['data'][3], 2,  $key, $value);
 
-if($key === 2) {
-if($tabulkys['data'][2] < $tabulkys['data'][3]) {
-$class_farba = 'class-do-minusu';
-} else {
-$class_farba = 'class-do-plusu';
-}
-?>
-<div class="w-16 d-inline-block float-left polozka-overenie <?php echo $class_farba; ?>">
-<?php
-echo '<div class="w-100 d-block float-left f-size-18 f-weight-300 titulokpolozka-overenie"><span>Celkový majetok</span></div>';
-echo '<strong>'. number_format($value, 0, ',', ' ') . ' €</strong>';
-if($tabulkys['data'][2] < $tabulkys['data'][3]) {echo'<div class="znamienko do-minusu d-inline-block"><i class="flaticon flaticon-down-arrow"></i></div>';} else {echo'<div class="znamienko do-plusu d-inline-block"><i class="flaticon flaticon-down-arrow"></i></div>';}
-echo '</div>';
-
-}
-
-if($key === 16) {
-if($tabulkys['data'][16] < $tabulkys['data'][17]) {
-$class_farba = 'class-do-minusu';
-} else {
-$class_farba = 'class-do-plusu';
-}
-?>
-<div class="w-16 d-inline-block float-left polozka-overenie <?php echo $class_farba; ?>">
-<?php
-echo '<div class="w-100 d-block float-left f-size-18 f-weight-300 titulokpolozka-overenie"><span>Nerozdelený zisk</span></div>';
-if(!empty($value)) { echo '<strong>'.  number_format($tabulkys['data'][16], 0, ',', ' ') . ' €</strong>'; } 
-if($tabulkys['data'][16] < $tabulkys['data'][17]) {echo'<div class="znamienko do-minusu d-inline-block"><i class="flaticon flaticon-down-arrow"></i></div>';} else {echo'<div class="znamienko do-plusu d-inline-block"><i class="flaticon flaticon-down-arrow"></i></div>';}
-
-echo '</div>';
-}
+generovanieHTML('Nerozdelený zisk', $tabulkys['data'][16], $tabulkys['data'][17], 16,  $key, $value);
 
 
 
 
+//Záväzky
 if(!empty($tabulkys['data'][20])) {
-if($key === 20) {
-if($tabulkys['data'][20] > $tabulkys['data'][21]) {
-$class_farba = 'class-do-minusu';
-} else {
-$class_farba = 'class-do-plusu';
-}
-?>
-<div class="w-16 d-inline-block float-left polozka-overenie <?php echo $class_farba; ?>">
-<?php
-echo '<div class="w-100 d-block float-left f-size-18 f-weight-300 titulokpolozka-overenie"><span>Záväzky</span></div>';
-echo '<strong>'. number_format($tabulkys['data'][20], 0, ',', ' ') . ' €</strong>';
-if($tabulkys['data'][20] > $tabulkys['data'][21]) {echo'<div class="znamienko do-minusu d-inline-block"><i class="flaticon flaticon-down-arrow"></i></div>';} else {echo'<div class="znamienko do-plusu d-inline-block"><i class="flaticon flaticon-down-arrow"></i></div>';}
+    generovanieHTML('Závätky', $tabulkys['data'][20], $tabulkys['data'][21], 20,  $key, $value);
 
-echo '</div>';
-}
 } else {
-if($key === 44) {
-if($tabulkys['data'][44] > $tabulkys['data'][45]) {
-$class_farba = 'class-do-minusu';
-} else {
-$class_farba = 'class-do-plusu';
-}
-?>
-<div class="w-16 d-inline-block float-left polozka-overenie <?php echo $class_farba; ?>">
-<?php
-echo '<div class="w-100 d-block float-left f-size-18 f-weight-300 titulokpolozka-overenie"><span>Záväzky</span></div>';
-echo '<strong>'. number_format($tabulkys['data'][44], 0, ',', ' ') . ' €</strong>';
-if($tabulkys['data'][44] > $tabulkys['data'][45]) {echo'<div class="znamienko do-minusu d-inline-block"><i class="flaticon flaticon-down-arrow"></i></div>';} else {echo'<div class="znamienko do-plusu d-inline-block"><i class="flaticon flaticon-down-arrow"></i></div>';}
-
-echo '</div>';
-}
+generovanieHTML('Závätky', $tabulkys['data'][44], $tabulkys['data'][45], 44,  $key, $value);
 }
 
 }
