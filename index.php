@@ -87,7 +87,7 @@ foreach($tabulkyss as $key => $value) {
 
 
 //TRZBY ZACIATOK
-if(!empty($tabulkys['data'][4])) {
+if(!empty($tabulkys['data'][4])) {  // Pri niektorých iteráciach sú údaje na riadkoch 4 a 5, ale pre niektorých to môžu byť riadky 0 a 1, preto som to vložil do podmienky
 generovanieHTML('Tržby', $tabulkys['data'][4], $tabulkys['data'][5], 4,  $key, $value);
 } else {
 generovanieHTML('Tržby', $tabulkys['data'][0], $tabulkys['data'][1], 0,  $key, $value);    
@@ -97,7 +97,7 @@ generovanieHTML('Tržby', $tabulkys['data'][0], $tabulkys['data'][1], 0,  $key, 
 
 //ZISK Zaciatok
 $class_farba = '';
-if(!empty($tabulkys['data'][74])) {
+if(!empty($tabulkys['data'][74])) { // Pri niektorých iteráciach sú údaje na riadkoch 74 a 75, ale pre niektorých to môžu byť riadky 120 a 121, preto som to vložil do podmienky
     generovanieHTML('Zisk', $tabulkys['data'][74], $tabulkys['data'][75], 74,  $key, $value);
 } else {
     generovanieHTML('Zisk', $tabulkys['data'][120], $tabulkys['data'][121], 120,  $key, $value);
@@ -105,7 +105,7 @@ if(!empty($tabulkys['data'][74])) {
 
 //Celkové výnosy
 
-if(!empty($tabulkys['data'][2])) {
+if(!empty($tabulkys['data'][2])) { // Pri niektorých iteráciach sú údaje na riadkoch 2 a 3, ale pre niektorých to môžu byť riadky 0 a 1, preto som to vložil do podmienky
     generovanieHTML('celkové výnosy', $tabulkys['data'][2], $tabulkys['data'][3], 2,  $key, $value);
 } else {
     generovanieHTML('celkové výnosy', $tabulkys['data'][0], $tabulkys['data'][1], 0,  $key, $value);
