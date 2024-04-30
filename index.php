@@ -13,35 +13,26 @@ function in_array_r($needle, $haystack, $strict = false) {
 }
 
 
+function getJsonData($link) {
+    $curl = curl_init();
+    $key = "Cache-Control: max-age=3600";
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($curl, CURLOPT_URL, $link);
+    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'GET');
+    curl_setopt($curl, CURLOPT_HTTPHEADER, array($key, "Content-Type:application/json", "Accept:*/*", "page: 1"));
+    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 1);
+    $out = curl_exec($curl);
+    curl_close($curl);
+    return json_decode($out, true);
+}
+
+
 $link ="https://www.registeruz.sk/cruz-public/api/uctovne-jednotky?zmenene-od=2000-01-01&max-zaznamov=100&ico=$ico";
+    $obj = getJsonData($link);
+    $id_uctovnej_jednotky = implode("", $obj['id']);
 
-
-$curl=curl_init(); 
-$key = "Cache-Control: max-age=3600";
-curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
-curl_setopt($curl,CURLOPT_URL,$link);
-curl_setopt($curl,CURLOPT_CUSTOMREQUEST,'GET');
-curl_setopt($curl, CURLOPT_HTTPHEADER, array($key,"Content-Type:application/json", "Accept:*/*", "page: 1"));  
-curl_setopt($curl,CURLOPT_SSL_VERIFYPEER,1);
-$out = curl_exec($curl); 
-curl_close($curl);
-$obj = json_decode($out);
-$id_uctovnej_jednotky = implode("",$obj->id);
-
-
-$link_uctovna_jednotka ="https://www.registeruz.sk/cruz-public/api/uctovna-jednotka?id=$id_uctovnej_jednotky";
-
-$curl2=curl_init(); 
-$key = "Cache-Control: max-age=3600";
-curl_setopt($curl2,CURLOPT_RETURNTRANSFER,true);
-curl_setopt($curl2,CURLOPT_URL,$link_uctovna_jednotka);
-curl_setopt($curl2,CURLOPT_CUSTOMREQUEST,'GET');
-curl_setopt($curl2, CURLOPT_HTTPHEADER, array($key,"Content-Type:application/json", "Accept:*/*", "page: 1"));  
-curl_setopt($curl2,CURLOPT_SSL_VERIFYPEER,1);
-$out2 = curl_exec($curl2); 
-curl_close($curl2);
-$obj_new = json_decode($out2);
-
+    $link_uctovna_jednotka = "https://www.registeruz.sk/cruz-public/api/uctovna-jednotka?id=$id_uctovnej_jednotky";
+    $obj_new = getJsonData($link_uctovna_jednotka);
 
 
 //echo $obj_new->skNace;
@@ -49,63 +40,24 @@ $obj_new = json_decode($out2);
 //echo $obj_new->nazovUJ;
 //print_r($obj_new);
 $id_vykazu = array();
-rsort($obj_new->idUctovnychZavierok);
-foreach ($obj_new->idUctovnychZavierok as $ustovna_zavierka) {
+rsort($obj_new['idUctovnychZavierok']);
+foreach ($obj_new['idUctovnychZavierok'] as $ustovna_zavierka) {
 
 
 
-$link_uctovna_zavierka ="https://www.registeruz.sk/cruz-public/api/uctovna-zavierka?id=$ustovna_zavierka";
-
-$curl3=curl_init(); 
-$key = "Cache-Control: max-age=3600";
-curl_setopt($curl3,CURLOPT_RETURNTRANSFER,true);
-curl_setopt($curl3,CURLOPT_URL,$link_uctovna_zavierka);
-curl_setopt($curl3,CURLOPT_CUSTOMREQUEST,'GET');
-curl_setopt($curl3, CURLOPT_HTTPHEADER, array($key,"Content-Type:application/json", "Accept:*/*", "page: 1"));  
-curl_setopt($curl3,CURLOPT_SSL_VERIFYPEER,1);
-$out3 = curl_exec($curl3); 
-curl_close($curl3);
-$obj_new2 = json_decode($out3);
+$link_uctovna_zavierka = "https://www.registeruz.sk/cruz-public/api/uctovna-zavierka?id=$ustovna_zavierka";
+        $obj_new2 = getJsonData($link_uctovna_zavierka);
+        $id_vykazu = $obj_new2['idUctovnychVykazov'];
 
 
-$id_vykazu = $obj_new2->idUctovnychVykazov;
+foreach ($id_vykazu as $ustovnay_vykaz) {
+            $link_uctovny_vykaz = "https://www.registeruz.sk/cruz-public/api/uctovny-vykaz?id=$ustovnay_vykaz";
+            $obj_new4 = getJsonData($link_uctovny_vykaz);
 
+            $tabulky = !empty($obj_new4['obsah']['tabulky']) ? $obj_new4['obsah']['tabulky'] : [];
+            $datumPoslednejUpravyod = !empty($obj_new4['obsah']['titulnaStrana']['obdobieOd']) ? $obj_new4['obsah']['titulnaStrana']['obdobieOd'] : '';
+            $datumPoslednejUpravydo = !empty($obj_new4['obsah']['titulnaStrana']['obdobieDo']) ? $obj_new4['obsah']['titulnaStrana']['obdobieDo'] : '';
 
-foreach ($id_vykazu as $ustovnay_vykaz) {  
-
-
-
-$link_uctovny_vykaz ="https://www.registeruz.sk/cruz-public/api/uctovny-vykaz?id=$ustovnay_vykaz";
-
-$curl4=curl_init(); 
-$key = "Cache-Control: max-age=3600";
-curl_setopt($curl4,CURLOPT_RETURNTRANSFER,true);
-curl_setopt($curl4,CURLOPT_URL,$link_uctovny_vykaz);
-curl_setopt($curl4,CURLOPT_CUSTOMREQUEST,'GET');
-curl_setopt($curl4, CURLOPT_HTTPHEADER, array($key,"Content-Type:application/json", "Accept:*/*", "page: 1"));  
-curl_setopt($curl4,CURLOPT_SSL_VERIFYPEER,1);
-$out4 = curl_exec($curl4); 
-curl_close($curl4);
-$obj_new4_zakl = json_decode( json_encode($out4), true);
-//$obj_new4 = json_decode( $out4, true);
-$obj_new4 = json_decode($out4, true);
-
-
-//print_r($obj_new4);
-$tabulky = '';
-$datumPoslednejUpravyod = '';
-$datumPoslednejUpravydo = '';
-if(!empty($obj_new4['obsah']['tabulky'])) {
-$tabulky = $obj_new4['obsah']['tabulky'];
-}
-
-$ulozenie_tabuliek[] = $obj_new4;
-if(!empty($obj_new4['obsah']['titulnaStrana']['obdobieOd'])) {
-$datumPoslednejUpravyod = $obj_new4['obsah']['titulnaStrana']['obdobieOd'];
-}
-if(!empty($obj_new4['obsah']['titulnaStrana']['obdobieDo'])) {
-$datumPoslednejUpravydo = $obj_new4['obsah']['titulnaStrana']['obdobieDo'];
-}
 
 //echo $obj_new4['obsah']['titulnaStrana']['typZavierky'];
 
@@ -255,7 +207,7 @@ if (in_array_r("Strana pasív", $tabulkys)) {
 
 echo '<div class="w-100 d-block float-left">';
 
-
+echo '<div style="width:100%;height:2px;background:#000;"></div>';
 echo  '<strong class="w-100 d-block float-left mb-1 f-size-20">Rok: ' . date('Y',strtotime($datumPoslednejUpravydo)) . '</strong>';
 
 echo '<div class="w-100 d-block float-left biele tien-boxu mb-5 p-4 box-sizizng">';
