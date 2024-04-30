@@ -26,7 +26,7 @@ function getJsonData($link) {
     return json_decode($out, true);
 }
 
-function generovanieHTML($novy_rok, $stary_rok, $kluc) {
+function generovanieHTML($nazov, $novy_rok, $stary_rok, $kluc, $key, $value) {
 if($key === $kluc) {
 if($novy_rok < $stary_rok) {
 $class_farba = 'class-do-minusu';
@@ -36,7 +36,7 @@ $class_farba = 'class-do-plusu';
 ?>
 <div class="w-16 d-inline-block float-left polozka-overenie <?php echo $class_farba; ?>">
 <?php
-echo '<div class="w-100 d-block float-left f-size-18 f-weight-300 titulokpolozka-overenie"><span>Tržby</span></div>';
+echo '<div class="w-100 d-block float-left f-size-18 f-weight-300 titulokpolozka-overenie"><span>' . $nazov .'</span></div>';
 echo '<strong>'. number_format($value, 0, ',', ' ') . ' €</strong>';
 if($novy_rok < $stary_rok) {echo'<div class="znamienko do-minusu d-inline-block"><i class="flaticon flaticon-down-arrow"></i></div>';} else {echo'<div class="znamienko do-plusu d-inline-block"><i class="flaticon flaticon-down-arrow"></i></div>';}
 echo '</div>';
@@ -98,7 +98,7 @@ foreach($tabulkyss as $key => $value) {
 
 //TRZBY ZACIATOK
 if(!empty($tabulkys['data'][4])) {
-generovanieHTML($tabulkys['data'][4], $tabulkys['data'][5], 4);
+generovanieHTML('Tržby', $tabulkys['data'][4], $tabulkys['data'][5], 4,  $key, $value);
 } else {
 if($key === 0) {
 if($tabulkys['data'][0] < $tabulkys['data'][1]) {
@@ -125,21 +125,7 @@ echo '</div>';
 //ZISK Zaciatok
 $class_farba = '';
 if(!empty($tabulkys['data'][74])) {
-if($key === 74) { 
-
-if($tabulkys['data'][74] < $tabulkys['data'][75]) {
-$class_farba = 'class-do-minusu';
-} else {
-$class_farba = 'class-do-plusu';
-}
-?>
-<div class="w-16 d-inline-block float-left polozka-overenie <?php echo $class_farba; ?>">
-<?php
-echo '<div class="w-100 d-block float-left f-size-18 f-weight-300 titulokpolozka-overenie"><span>Zisk</span></div>';
-echo '<strong>'. number_format($value, 0, ',', ' ') . ' €</strong>';
-if($tabulkys['data'][74] < $tabulkys['data'][75]) {echo'<div class="znamienko do-minusu d-inline-block"><i class="flaticon flaticon-down-arrow"></i></div>';} else {echo'<div class="znamienko do-plusu d-inline-block"><i class="flaticon flaticon-down-arrow"></i></div>';}
-echo '</div>';
-}
+    generovanieHTML('Zisk', $tabulkys['data'][74], $tabulkys['data'][75], 74,  $key, $value);
 } else {
 if($key === 120) { 
 
@@ -165,20 +151,7 @@ echo '</div>';
 //ZISK Celkové výnosy
 
 if(!empty($tabulkys['data'][2])) {
-if($key === 2) {
-if($tabulkys['data'][2] < $tabulkys['data'][3]) {
-$class_farba = 'class-do-minusu';
-} else {
-$class_farba = 'class-do-plusu';
-}
-?>
-<div class="w-16 d-inline-block float-left polozka-overenie <?php echo $class_farba; ?>">
-<?php
-echo '<div class="w-100 d-block float-left f-size-18 f-weight-300 titulokpolozka-overenie"><span>Celkové výnosy</span></div>';
-echo '<strong>'. number_format($tabulkys['data'][2], 0, ',', ' ') . ' €</strong>';
-if($tabulkys['data'][2] < $tabulkys['data'][3]) {echo'<div class="znamienko do-minusu d-inline-block"><i class="flaticon flaticon-down-arrow"></i></div>';} else {echo'<div class="znamienko do-plusu d-inline-block"><i class="flaticon flaticon-down-arrow"></i></div>';}
-echo '</div>';
-}
+    generovanieHTML('Zisk', $tabulkys['data'][2], $tabulkys['data'][3], 2,  $key, $value);
 } else {
 if($key === 0) {
 if($tabulkys['data'][0] < $tabulkys['data'][1]) {
