@@ -2,7 +2,7 @@
 if(!empty($_GET["ico"])) {
 $ico = $_GET["ico"];
 
-
+//vyhladanie či sa výraz nachádza v cykle
 function in_array_r($needle, $haystack, $strict = false) {
     foreach ($haystack as $item) {
         if (($strict ? $item === $needle : $item == $needle) || (is_array($item) && in_array_r($needle, $item, $strict))) {
@@ -14,6 +14,7 @@ function in_array_r($needle, $haystack, $strict = false) {
 }
 
 
+//opakujúca sa API funkcia, ktorá prebieha jednotlívými URL, ktoré slúžia na získavanie údajov
 function getJsonData($link) {
     $curl = curl_init();
     $key = "Cache-Control: max-age=3600";
@@ -27,27 +28,26 @@ function getJsonData($link) {
     return json_decode($out, true);
 }
 
+//Generovanie HTML (názov celku,id riadku vo výstupe, id riadku vo výstupe, $key z cyklu, $value z cyklu )
 function generovanieHTML($nazov, $novy_rok, $stary_rok, $kluc, $key, $value) {
 if($key === $kluc) {
-if($novy_rok < $stary_rok) {
+if($novy_rok < $stary_rok) { // porovnanie výsledkov medzi daným rokom a prechádzajúcim - podmienka slúži na znázornenie či ide subjekt do mínuových čísel. 
 $class_farba = 'class-do-minusu';
 } else {
 $class_farba = 'class-do-plusu';
 }
 ?>
-<div class="w-16 d-inline-block float-left polozka-overenie <?php echo $class_farba; ?>">
+<div class="w-16 d-inline-block float-left polozka-overenie <?php echo $class_farba; ?>"> // Pridanie premennej do html 
 <?php
-echo '<div class="w-100 d-block float-left f-size-18 f-weight-300 titulokpolozka-overenie"><span>' . $nazov .'</span></div>';
+echo '<div class="w-100 d-block float-left f-size-18 f-weight-300 titulokpolozka-overenie"><span>' . $nazov .'</span></div>'; //Zobrazenie názvu
 if(is_numeric($value)) {
-echo '<strong>'. number_format($value, 0, ',', ' ') . ' €</strong>';
+echo '<strong>'. number_format($value, 0, ',', ' ') . ' €</strong>'; // Zobrazenie hodnoty
 } else {
 echo '<strong>-</strong>';    
 }
 if($novy_rok < $stary_rok) {echo'<div class="znamienko do-minusu d-inline-block"><i class="flaticon flaticon-down-arrow"></i></div>';} else {echo'<div class="znamienko do-plusu d-inline-block"><i class="flaticon flaticon-down-arrow"></i></div>';}
 echo '</div>';
 }
-
-
 }
 
 $link ="https://www.registeruz.sk/cruz-public/api/uctovne-jednotky?zmenene-od=2000-01-01&max-zaznamov=100&ico=$ico";
@@ -60,8 +60,6 @@ $link ="https://www.registeruz.sk/cruz-public/api/uctovne-jednotky?zmenene-od=20
 $id_vykazu = array();
 rsort($obj_new['idUctovnychZavierok']);
 foreach ($obj_new['idUctovnychZavierok'] as $ustovna_zavierka) {
-
-
 
 $link_uctovna_zavierka = "https://www.registeruz.sk/cruz-public/api/uctovna-zavierka?id=$ustovna_zavierka";
         $obj_new2 = getJsonData($link_uctovna_zavierka);
@@ -80,7 +78,6 @@ foreach ($id_vykazu as $ustovnay_vykaz) {
 if(!empty($obj_new4['obsah']['tabulky'])) {
 foreach($tabulky as $tabulkys)  {
 
-
 if (in_array_r("Výkaz ziskov a strát", $tabulkys)) {
 
 $previousValue = null;
@@ -98,7 +95,6 @@ generovanieHTML('Tržby', $tabulkys['data'][0], $tabulkys['data'][1], 0,  $key, 
 //TRZBY KNIEC
 
 
-
 //ZISK Zaciatok
 $class_farba = '';
 if(!empty($tabulkys['data'][74])) {
@@ -107,7 +103,6 @@ if(!empty($tabulkys['data'][74])) {
     generovanieHTML('Zisk', $tabulkys['data'][120], $tabulkys['data'][121], 120,  $key, $value);
 }
 
-
 //Celkové výnosy
 
 if(!empty($tabulkys['data'][2])) {
@@ -115,8 +110,6 @@ if(!empty($tabulkys['data'][2])) {
 } else {
     generovanieHTML('celkové výnosy', $tabulkys['data'][0], $tabulkys['data'][1], 0,  $key, $value);
 }
-
-
 
 }
 
@@ -146,8 +139,6 @@ foreach($tabulkyss as $key => $value) {
 generovanieHTML('celkový majetok', $tabulkys['data'][2], $tabulkys['data'][3], 2,  $key, $value);
 
 generovanieHTML('Nerozdelený zisk', $tabulkys['data'][16], $tabulkys['data'][17], 16,  $key, $value);
-
-
 
 
 //Záväzky
