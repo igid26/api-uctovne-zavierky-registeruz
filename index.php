@@ -37,7 +37,7 @@ $class_farba = 'class-do-minusu';
 $class_farba = 'class-do-plusu';
 }
 ?>
-<div class="w-16 d-inline-block float-left polozka-overenie <?php echo $class_farba; ?>"> // Pridanie premennej do html 
+<div class="w-16 d-inline-block float-left polozka-overenie <?php echo $class_farba; ?>"> 
 <?php
 echo '<div class="w-100 d-block float-left f-size-18 f-weight-300 titulokpolozka-overenie"><span>' . $nazov .'</span></div>'; //Zobrazenie názvu
 if(is_numeric($value)) {
